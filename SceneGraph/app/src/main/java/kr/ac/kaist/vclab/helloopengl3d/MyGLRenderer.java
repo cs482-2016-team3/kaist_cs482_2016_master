@@ -90,7 +90,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     final float bottom = -1.0f;
     final float top = 1.0f;
     final float near = 1f;
-    final float far = 10.0f;
+    final float far = 100.0f;
 
     float touchedX = -1, touchedY = -1;
     @Override
@@ -282,7 +282,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         //Problem
         //Construct a robot and link to the world (g_world)
+        float[] tempColor = {0.0f, 1.0f, 0.0f};
 
+        g_world.addChild(robotFactory.constructRobot(tempColor));
 
         g_currentCameraNode = g_skyNode;
     }

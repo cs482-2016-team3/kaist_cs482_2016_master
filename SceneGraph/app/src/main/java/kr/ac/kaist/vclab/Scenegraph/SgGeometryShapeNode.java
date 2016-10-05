@@ -24,6 +24,18 @@ public class SgGeometryShapeNode extends SgShapeNode {
     public SgGeometryShapeNode(Geometry g, float[] color, float[] translate, float[] eulerAngles, float[] scales){
         geo = g;
         System.arraycopy(color, 0, this.color, 0, 3);
+        float[] temp = new float[16];
+        float[] trans = new float[16];
+        Matrix.setIdentityM(trans, 0);
+        Matrix.translateM(trans, 0, translate[0], translate[1], translate[2]);
+        Matrix.setIdentityM(temp, 0);
+        Matrix.scaleM(temp, 0, scales[0], scales[1], scales[2]);
+        Matrix.rotateM(temp, 0, eulerAngles[0], 1.0f, 0.0f, 0.0f);
+        Matrix.rotateM(temp, 0, eulerAngles[1], 0.0f, 1.0f, 0.0f);
+        Matrix.rotateM(temp, 0, eulerAngles[2], 0.0f, 0.0f, 1.0f);
+
+        Matrix.multiplyMM(affineM, 0, trans, 0, temp, 0);
+
 
 
         //Problem

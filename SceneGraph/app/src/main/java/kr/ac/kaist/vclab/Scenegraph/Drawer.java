@@ -1,6 +1,8 @@
 package kr.ac.kaist.vclab.Scenegraph;
 
 import java.util.Vector;
+import android.opengl.Matrix;
+import kr.ac.kaist.vclab.util.Quaternion;
 
 /**
  * Created by PCPC on 2016-10-05.
@@ -20,7 +22,9 @@ public class Drawer extends SgNodeVisitor{
     public boolean visit(SgTransformNode node){
         //Problem
         //Update the Rigid Transform in the hierachy
-
+        RigTForm tempRBT = rbtStack.lastElement();
+        RigTForm nodeRBT = node.getRbt();
+        rbtStack.add(tempRBT.multiply(nodeRBT));
         return true;
     }
 
@@ -38,8 +42,19 @@ public class Drawer extends SgNodeVisitor{
         //and send to the shader
         //ref: ShareState Class
         float[] MVM = new float [16];
-        float[] nM = new float[16];
 
+        float[] temp = new float[16];
+        float[] trans = new float[16];
+        float[] transVec = rbtStack.lastElement().getTranslation();
+        float[] rotate;
+        Quaternion quat = rbtStack.lastElement().getRotation();
+        rotate = quat.quatToMat(quat);
+        Matrix.setIdentityM(trans, 0);
+        Matrix.translateM(trans, 0, transVec[0], transVec[1], transVec[2]);
+        Matrix.multiplyMM(temp, 0, trans, 0, rotate, 0);
+
+        Matrix.multiplyMM(MVM, 0, temp, 0, node.getAffineM(), 0);
+        curSS.sendModelViewNormalMatrix(curSS, MVM);
 
         node.draw(curSS);
         return true;
